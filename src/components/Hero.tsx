@@ -3,6 +3,8 @@
 import { ArrowDown, Briefcase, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
+const basePath = process.env.NODE_ENV === "production" ? "/raymond-sambur-profile" : "";
+
 const floatingVariants = {
   animate: {
     y: [0, -15, 0],
@@ -54,80 +56,107 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-        {/* Badge */}
-        <motion.span
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="inline-block px-4 py-1.5 mb-8 text-xs font-medium tracking-wider uppercase text-primary border border-primary/30 rounded-full bg-primary/5 backdrop-blur-sm"
-        >
-          Senior SDET &bull; Quality Engineering
-        </motion.span>
-
-        {/* Name with staggered letter animation */}
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="text-5xl sm:text-6xl md:text-7xl font-bold text-text-primary leading-[1.1] mb-6"
-        >
-          <span className="block">Raymond Jhonathan</span>
-          <motion.span
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-light to-accent"
-          >
-            Sambur
-          </motion.span>
-        </motion.h1>
-
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.0 }}
-          className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-12 leading-relaxed"
-        >
-          Building bulletproof software through intelligent automation.
-          <br className="hidden sm:block" />
-          Architecting test frameworks that scale with{" "}
-          <span className="text-primary font-medium">
-            high-velocity fintech systems
-          </span>
-          .
-        </motion.p>
-
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.2 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <a
-            href="#projects"
-            className="group inline-flex items-center gap-2 px-7 py-3.5 bg-primary hover:bg-primary-dark text-white font-medium rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5"
-          >
-            <Briefcase size={18} />
-            View My Work
+      <div className="relative z-10 max-w-5xl mx-auto px-6">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-16">
+          {/* Text content - left side */}
+          <div className="text-center lg:text-left flex-1">
+            {/* Badge */}
             <motion.span
-              className="inline-block"
-              animate={{ x: [0, 4, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="inline-block px-4 py-1.5 mb-8 text-xs font-medium tracking-wider uppercase text-primary border border-primary/30 rounded-full bg-primary/5 backdrop-blur-sm"
             >
-              →
+              Senior SDET &bull; Quality Engineering
             </motion.span>
-          </a>
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-2 px-7 py-3.5 border border-surface-lighter hover:border-primary/50 text-text-secondary hover:text-primary font-medium rounded-xl transition-all duration-300 hover:-translate-y-0.5 backdrop-blur-sm"
+
+            {/* Name with staggered letter animation */}
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="text-5xl sm:text-6xl md:text-7xl font-bold text-text-primary leading-[1.1] mb-6"
+            >
+              <span className="block">Raymond Jhonathan</span>
+              <motion.span
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-light to-accent"
+              >
+                Sambur
+              </motion.span>
+            </motion.h1>
+
+            {/* Tagline */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.0 }}
+              className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed"
+            >
+              Building bulletproof software through intelligent automation.
+              <br className="hidden sm:block" />
+              Architecting test frameworks that scale with{" "}
+              <span className="text-primary font-medium">
+                high-velocity fintech systems
+              </span>
+              .
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.2 }}
+              className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4"
+            >
+              <a
+                href="#projects"
+                className="group inline-flex items-center gap-2 px-7 py-3.5 bg-primary hover:bg-primary-dark text-white font-medium rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5"
+              >
+                <Briefcase size={18} />
+                View My Work
+                <motion.span
+                  className="inline-block"
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  →
+                </motion.span>
+              </a>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 px-7 py-3.5 border border-surface-lighter hover:border-primary/50 text-text-secondary hover:text-primary font-medium rounded-xl transition-all duration-300 hover:-translate-y-0.5 backdrop-blur-sm"
+              >
+                <Mail size={18} />
+                Get In Touch
+              </a>
+            </motion.div>
+          </div>
+
+          {/* Profile Photo - right side */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="relative shrink-0"
           >
-            <Mail size={18} />
-            Get In Touch
-          </a>
-        </motion.div>
+            {/* Glow ring behind photo */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-xl scale-110" />
+            {/* Photo container — circular clip removes the black background */}
+            <div className="relative w-48 h-48 sm:w-56 sm:h-56 lg:w-72 lg:h-72 rounded-full overflow-hidden border-2 border-primary/30 shadow-2xl shadow-primary/10">
+              {/* TODO: Make sure profile.png is saved in /public/ */}
+              <img
+                src={`${basePath}/profile.png`}
+                alt="Raymond Jhonathan Sambur"
+                className="w-full h-full object-cover scale-110"
+              />
+            </div>
+            {/* Decorative ring */}
+            <div className="absolute -inset-3 rounded-full border border-primary/10 animate-pulse" />
+          </motion.div>
+        </div>
 
         {/* Stats row */}
         <motion.div
