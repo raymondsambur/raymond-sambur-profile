@@ -1,7 +1,8 @@
 "use client";
 
-import { ExternalLink, ArrowUpRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { ExternalLink, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -11,11 +12,6 @@ function GithubIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-/* ============================================
-   PROJECT DATA
-   These are your actual GitHub projects.
-   Update URLs and descriptions as needed.
-   ============================================ */
 const projects = [
   {
     title: "Automation Script Generator",
@@ -24,7 +20,7 @@ const projects = [
     tags: ["Playwright", "Generative AI", "Notion API", "TypeScript", "Node.js"],
     sourceUrl: "https://github.com/raymondsambur/automation-script-generator",
     liveUrl: null,
-    accent: "from-primary to-accent",
+    accent: "from-indigo-500 to-cyan-500",
   },
   {
     title: "UI & API Automation — Playwright",
@@ -33,30 +29,19 @@ const projects = [
     tags: ["Playwright", "TypeScript", "API Testing", "Page Object Model", "CI/CD"],
     sourceUrl: "https://github.com/raymondsambur/ui-api-automation-playwright",
     liveUrl: null,
-    accent: "from-accent to-primary",
+    accent: "from-cyan-500 to-indigo-500",
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.2 },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: "easeOut" as const },
-  },
-};
-
 export default function Projects() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const next = () => setActiveIndex((i) => (i + 1) % projects.length);
+  const prev = () =>
+    setActiveIndex((i) => (i - 1 + projects.length) % projects.length);
+
   return (
-    <section id="projects" className="py-24 bg-surface">
+    <section id="projects" className="py-24 bg-slate-950">
       <div className="max-w-5xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -66,99 +51,145 @@ export default function Projects() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
             Featured Projects
           </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-primary to-accent mx-auto mb-6 rounded-full" />
-          <p className="text-text-secondary max-w-xl mx-auto">
+          <div className="w-16 h-1 bg-gradient-to-r from-indigo-500 to-cyan-500 mx-auto mb-6 rounded-full" />
+          <p className="text-slate-400 max-w-xl mx-auto">
             Open-source tools and frameworks I&apos;ve built to push the
             boundaries of test automation.
           </p>
         </motion.div>
 
-        {/* Project Cards */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="space-y-8"
-        >
-          {projects.map((project) => (
-            <motion.article
-              key={project.title}
-              variants={cardVariants}
-              className="group relative bg-surface-light rounded-2xl border border-border hover:border-primary/30 overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-primary/5"
-            >
-              {/* Top gradient accent bar */}
-              <div
-                className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${project.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-              />
+        {/* Animated Card Stack */}
+        <div className="relative">
+          {/* Stacked cards preview (background cards) */}
+          <div className="relative flex justify-center">
+            <div className="relative w-full max-w-2xl">
+              {/* Background card indicators */}
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-[90%] h-full rounded-2xl border border-slate-800 bg-slate-900/50 -z-10" />
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[80%] h-full rounded-2xl border border-slate-800/50 bg-slate-900/30 -z-20" />
 
-              <div className="p-8 md:p-10">
-                {/* Header row */}
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl md:text-2xl font-bold text-text-primary group-hover:text-primary transition-colors duration-300">
-                    {project.title}
-                  </h3>
-                  <div className="flex items-center gap-3 shrink-0 ml-4">
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2.5 rounded-lg bg-surface border border-border hover:border-primary hover:text-primary text-text-muted transition-all duration-200"
-                        aria-label={`Live demo of ${project.title}`}
-                      >
-                        <ExternalLink size={18} />
-                      </a>
-                    )}
+              {/* Active card */}
+              <AnimatePresence mode="wait">
+                <motion.article
+                  key={activeIndex}
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.6,
+                    bounce: 0,
+                  }}
+                  className="relative bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden"
+                >
+                  {/* Top gradient accent */}
+                  <div
+                    className={`h-1 bg-gradient-to-r ${projects[activeIndex].accent}`}
+                  />
+
+                  <div className="p-8 md:p-10">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-5">
+                      <h3 className="text-xl md:text-2xl font-bold text-slate-100">
+                        {projects[activeIndex].title}
+                      </h3>
+                      <div className="flex items-center gap-3 shrink-0 ml-4">
+                        {projects[activeIndex].liveUrl && (
+                          <a
+                            href={projects[activeIndex].liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200"
+                            aria-label="Live demo"
+                          >
+                            <ExternalLink size={18} />
+                          </a>
+                        )}
+                        <a
+                          href={projects[activeIndex].sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200"
+                          aria-label="Source code"
+                        >
+                          <GithubIcon size={18} />
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-slate-400 leading-relaxed mb-6 max-w-3xl">
+                      {projects[activeIndex].summary}
+                    </p>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {projects[activeIndex].tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-lg"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* View link */}
                     <a
-                      href={project.sourceUrl}
+                      href={projects[activeIndex].sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2.5 rounded-lg bg-surface border border-border hover:border-primary hover:text-primary text-text-muted transition-all duration-200"
-                      aria-label={`Source code of ${project.title}`}
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors group/link"
                     >
-                      <GithubIcon size={18} />
+                      View on GitHub
+                      <ArrowUpRight
+                        size={14}
+                        className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"
+                      />
                     </a>
                   </div>
-                </div>
+                </motion.article>
+              </AnimatePresence>
+            </div>
+          </div>
 
-                {/* Description */}
-                <p className="text-text-secondary leading-relaxed mb-6 max-w-3xl">
-                  {project.summary}
-                </p>
+          {/* Navigation controls */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <button
+              onClick={prev}
+              className="p-2.5 rounded-lg border border-slate-800 bg-slate-900 hover:border-indigo-500/50 hover:text-indigo-400 text-slate-400 transition-all"
+              aria-label="Previous project"
+            >
+              <ChevronLeft size={18} />
+            </button>
 
-                {/* Tech Tags */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1.5 text-xs font-medium text-primary/90 bg-primary/8 border border-primary/15 rounded-lg"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+            {/* Dots */}
+            <div className="flex items-center gap-2">
+              {projects.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveIndex(i)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i === activeIndex
+                      ? "bg-indigo-500 w-6"
+                      : "bg-slate-700 hover:bg-slate-600"
+                  }`}
+                  aria-label={`Go to project ${i + 1}`}
+                />
+              ))}
+            </div>
 
-                {/* View on GitHub link */}
-                <a
-                  href={project.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors group/link"
-                >
-                  View on GitHub
-                  <ArrowUpRight
-                    size={14}
-                    className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"
-                  />
-                </a>
-              </div>
-            </motion.article>
-          ))}
-        </motion.div>
+            <button
+              onClick={next}
+              className="p-2.5 rounded-lg border border-slate-800 bg-slate-900 hover:border-indigo-500/50 hover:text-indigo-400 text-slate-400 transition-all"
+              aria-label="Next project"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );

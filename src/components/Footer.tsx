@@ -20,20 +20,18 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="py-8 bg-surface-light border-t border-border">
+    <footer className="py-8 bg-slate-950 border-t border-slate-800">
       <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Copyright */}
-        <p className="text-sm text-text-muted">
+        <p className="text-sm text-slate-500">
           &copy; {currentYear} Raymond Sambur. All rights reserved.
         </p>
 
-        {/* Social Links */}
         <div className="flex items-center gap-4">
           <a
             href="https://github.com/raymondsambur"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-text-muted hover:text-primary transition-colors"
+            className="text-slate-500 hover:text-indigo-400 transition-colors"
             aria-label="GitHub"
           >
             <GithubIcon size={18} />
@@ -42,14 +40,14 @@ export default function Footer() {
             href="https://linkedin.com/in/raymondsambur"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-text-muted hover:text-primary transition-colors"
+            className="text-slate-500 hover:text-indigo-400 transition-colors"
             aria-label="LinkedIn"
           >
             <LinkedinIcon size={18} />
           </a>
           <a
             href="mailto:raymondsambur@gmail.com"
-            className="text-text-muted hover:text-primary transition-colors"
+            className="text-slate-500 hover:text-indigo-400 transition-colors"
             aria-label="Email"
           >
             <Mail size={18} />

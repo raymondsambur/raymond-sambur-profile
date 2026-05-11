@@ -3,7 +3,6 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { motion } from "framer-motion";
 
-/* Brand icons (not available in lucide-react v0.500+) */
 function GithubIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -20,10 +19,6 @@ function LinkedinIcon({ size = 22 }: { size?: number }) {
   );
 }
 
-/* ============================================
-   CONTACT INFO
-   Update with your actual contact details.
-   ============================================ */
 const contactInfo = {
   email: "raymondsambur@gmail.com",
   phone: "(+62) 821-8981-4330",
@@ -34,9 +29,8 @@ const contactInfo = {
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-24 bg-surface">
+    <section id="contact" className="py-24 bg-slate-900">
       <div className="max-w-4xl mx-auto px-6">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -44,17 +38,16 @@ export default function Contact() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
             Get In Touch
           </h2>
-          <div className="w-16 h-1 bg-primary mx-auto mb-6 rounded-full" />
-          <p className="text-text-secondary max-w-lg mx-auto">
+          <div className="w-16 h-1 bg-gradient-to-r from-indigo-500 to-cyan-500 mx-auto mb-6 rounded-full" />
+          <p className="text-slate-400 max-w-lg mx-auto">
             Interested in collaborating or have a question? Feel free to reach
             out. I&apos;m always open to discussing new opportunities and ideas.
           </p>
         </motion.div>
 
-        {/* Contact Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -62,64 +55,52 @@ export default function Contact() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
         >
-          {/* Email */}
           <a
             href={`mailto:${contactInfo.email}`}
-            className="group flex flex-col items-center p-6 bg-surface-light rounded-xl border border-border hover:border-primary/30 transition-all duration-300"
+            className="group flex flex-col items-center p-6 bg-slate-950 rounded-2xl border border-slate-800 hover:border-indigo-500/30 transition-all duration-300"
           >
-            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-3 group-hover:bg-primary/20 transition-colors">
+            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-500/10 text-indigo-400 mb-3 group-hover:bg-indigo-500/20 transition-colors">
               <Mail size={22} />
             </div>
-            <span className="text-sm font-medium text-text-primary">Email</span>
-            <span className="text-xs text-text-secondary mt-1">
+            <span className="text-sm font-medium text-slate-100">Email</span>
+            <span className="text-xs text-slate-500 mt-1">
               {contactInfo.email}
             </span>
           </a>
 
-          {/* LinkedIn */}
           <a
             href={contactInfo.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex flex-col items-center p-6 bg-surface-light rounded-xl border border-border hover:border-primary/30 transition-all duration-300"
+            className="group flex flex-col items-center p-6 bg-slate-950 rounded-2xl border border-slate-800 hover:border-indigo-500/30 transition-all duration-300"
           >
-            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-3 group-hover:bg-primary/20 transition-colors">
+            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-500/10 text-indigo-400 mb-3 group-hover:bg-indigo-500/20 transition-colors">
               <LinkedinIcon size={22} />
             </div>
-            <span className="text-sm font-medium text-text-primary">
-              LinkedIn
-            </span>
-            <span className="text-xs text-text-secondary mt-1">
-              /in/raymondsambur
-            </span>
+            <span className="text-sm font-medium text-slate-100">LinkedIn</span>
+            <span className="text-xs text-slate-500 mt-1">/in/raymondsambur</span>
           </a>
 
-          {/* GitHub */}
           <a
             href={contactInfo.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex flex-col items-center p-6 bg-surface-light rounded-xl border border-border hover:border-primary/30 transition-all duration-300"
+            className="group flex flex-col items-center p-6 bg-slate-950 rounded-2xl border border-slate-800 hover:border-indigo-500/30 transition-all duration-300"
           >
-            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-3 group-hover:bg-primary/20 transition-colors">
+            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-500/10 text-indigo-400 mb-3 group-hover:bg-indigo-500/20 transition-colors">
               <GithubIcon size={22} />
             </div>
-            <span className="text-sm font-medium text-text-primary">
-              GitHub
-            </span>
-            <span className="text-xs text-text-secondary mt-1">
-              /raymondsambur
-            </span>
+            <span className="text-sm font-medium text-slate-100">GitHub</span>
+            <span className="text-xs text-slate-500 mt-1">/raymondsambur</span>
           </a>
         </motion.div>
 
-        {/* Additional Info */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-6 text-text-muted text-sm"
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 text-slate-500 text-sm"
         >
           <span className="flex items-center gap-2">
             <MapPin size={16} />

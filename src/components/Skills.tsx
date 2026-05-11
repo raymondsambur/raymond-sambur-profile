@@ -1,17 +1,8 @@
 "use client";
 
-import {
-  Monitor,
-  Code2,
-  Globe,
-  Container,
-  Wrench,
-} from "lucide-react";
+import { Monitor, Code2, Globe, Container, Wrench } from "lucide-react";
 import { motion } from "framer-motion";
 
-/* ============================================
-   SKILLS DATA
-   ============================================ */
 const skillCategories = [
   {
     icon: Monitor,
@@ -90,9 +81,8 @@ const cardVariants = {
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-24 bg-surface">
+    <section id="skills" className="py-24 bg-slate-950">
       <div className="max-w-6xl mx-auto px-6">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -100,17 +90,16 @@ export default function Skills() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
             Technical Skills
           </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-primary to-accent mx-auto mb-6 rounded-full" />
-          <p className="text-text-secondary max-w-lg mx-auto">
+          <div className="w-16 h-1 bg-gradient-to-r from-indigo-500 to-cyan-500 mx-auto mb-6 rounded-full" />
+          <p className="text-slate-400 max-w-lg mx-auto">
             A diverse toolkit built over 5+ years of hands-on quality
             engineering in high-scale environments.
           </p>
         </motion.div>
 
-        {/* Skills Grid */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -122,27 +111,25 @@ export default function Skills() {
             <motion.div
               key={cat.category}
               variants={cardVariants}
-              className="group bg-surface-light rounded-2xl border border-border p-7 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
+              className="group bg-slate-900 rounded-2xl border border-slate-800 p-7 hover:border-indigo-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5"
             >
-              {/* Category Header */}
               <div className="flex items-center gap-3 mb-5">
                 <div
                   className={`w-10 h-10 rounded-xl ${cat.bgColor} ${cat.borderColor} border flex items-center justify-center`}
                 >
                   <cat.icon size={20} className={cat.color} />
                 </div>
-                <h3 className="text-base font-semibold text-text-primary">
+                <h3 className="text-base font-semibold text-slate-100">
                   {cat.category}
                 </h3>
               </div>
 
-              {/* Skills */}
               <div className="flex flex-wrap gap-2.5">
                 {cat.skills.map((skill) => (
                   <motion.span
                     key={skill}
                     whileHover={{ scale: 1.05 }}
-                    className="px-3.5 py-2 text-sm font-medium text-text-secondary bg-surface rounded-xl border border-border hover:border-primary/30 hover:text-primary hover:bg-primary/5 transition-all duration-200 cursor-default"
+                    className="px-3.5 py-2 text-sm font-medium text-slate-300 bg-slate-950 rounded-xl border border-slate-800 hover:border-indigo-500/30 hover:text-indigo-300 hover:bg-indigo-500/5 transition-all duration-200 cursor-default"
                   >
                     {skill}
                   </motion.span>

@@ -3,9 +3,6 @@
 import { Building2, GraduationCap, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 
-/* ============================================
-   WORK EXPERIENCE DATA
-   ============================================ */
 const experiences = [
   {
     role: "Senior Software Development Engineer in Test",
@@ -57,9 +54,8 @@ const itemVariants = {
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-24 bg-surface-light">
+    <section id="experience" className="py-24 bg-slate-900">
       <div className="max-w-5xl mx-auto px-6">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -67,13 +63,12 @@ export default function Experience() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
             Work Experience
           </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-primary to-accent mx-auto mb-6 rounded-full" />
+          <div className="w-16 h-1 bg-gradient-to-r from-indigo-500 to-cyan-500 mx-auto mb-6 rounded-full" />
         </motion.div>
 
-        {/* Timeline */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -81,8 +76,7 @@ export default function Experience() {
           viewport={{ once: true }}
           className="relative"
         >
-          {/* Vertical line */}
-          <div className="absolute left-5 md:left-6 top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-border to-transparent" />
+          <div className="absolute left-5 md:left-6 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500/50 via-slate-800 to-transparent" />
 
           {experiences.map((exp) => (
             <motion.div
@@ -90,44 +84,38 @@ export default function Experience() {
               variants={itemVariants}
               className="relative pl-14 md:pl-16 pb-12 last:pb-0"
             >
-              {/* Timeline dot */}
-              <div className="absolute left-0 top-1 w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 border-2 border-primary/60 flex items-center justify-center backdrop-blur-sm">
-                <Building2 size={16} className="text-primary" />
+              <div className="absolute left-0 top-1 w-10 h-10 md:w-12 md:h-12 rounded-full bg-indigo-500/10 border-2 border-indigo-500/60 flex items-center justify-center backdrop-blur-sm">
+                <Building2 size={16} className="text-indigo-400" />
               </div>
 
-              {/* Card */}
-              <div className="bg-surface rounded-2xl border border-border p-6 md:p-8 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
-                {/* Role & Period */}
+              <div className="bg-slate-950 rounded-2xl border border-slate-800 p-6 md:p-8 hover:border-indigo-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
-                  <h3 className="text-lg md:text-xl font-bold text-text-primary">
+                  <h3 className="text-lg md:text-xl font-bold text-slate-100">
                     {exp.role}
                   </h3>
-                  <span className="inline-flex items-center gap-1.5 text-xs text-text-muted bg-surface-light px-3 py-1.5 rounded-full border border-border shrink-0">
+                  <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 bg-slate-900 px-3 py-1.5 rounded-full border border-slate-800 shrink-0">
                     <Calendar size={12} />
                     {exp.period}
                   </span>
                 </div>
 
-                {/* Company */}
-                <p className="text-sm font-semibold text-primary mb-1">
+                <p className="text-sm font-semibold text-indigo-400 mb-1">
                   {exp.company}
-                  <span className="text-text-muted font-normal">
-                    {" "}
-                    — {exp.location}
+                  <span className="text-slate-500 font-normal">
+                    {" "}— {exp.location}
                   </span>
                 </p>
-                <p className="text-sm text-text-muted italic mb-5 leading-relaxed">
+                <p className="text-sm text-slate-500 italic mb-5 leading-relaxed">
                   {exp.companyDescription}
                 </p>
 
-                {/* Highlights */}
                 <ul className="space-y-2.5">
                   {exp.highlights.map((item) => (
                     <li
                       key={item}
-                      className="text-sm text-text-secondary flex items-start gap-3"
+                      className="text-sm text-slate-400 flex items-start gap-3"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary/60 mt-2 shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500/60 mt-2 shrink-0" />
                       <span className="leading-relaxed">{item}</span>
                     </li>
                   ))}
@@ -137,7 +125,7 @@ export default function Experience() {
           ))}
         </motion.div>
 
-        {/* Education - Separate Section */}
+        {/* Education */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -145,22 +133,22 @@ export default function Experience() {
           transition={{ duration: 0.5 }}
           className="mt-20"
         >
-          <h3 className="text-2xl font-bold text-text-primary mb-8 text-center">
+          <h3 className="text-2xl font-bold text-slate-100 mb-8 text-center">
             Education
           </h3>
           <div className="max-w-2xl mx-auto">
-            <div className="flex items-center gap-5 bg-surface rounded-2xl border border-border p-6 md:p-8">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                <GraduationCap size={24} className="text-primary" />
+            <div className="flex items-center gap-5 bg-slate-950 rounded-2xl border border-slate-800 p-6 md:p-8">
+              <div className="w-14 h-14 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                <GraduationCap size={24} className="text-indigo-400" />
               </div>
               <div>
-                <h4 className="text-lg font-semibold text-text-primary">
+                <h4 className="text-lg font-semibold text-slate-100">
                   Bachelor of Computer Science in Information Systems
                 </h4>
-                <p className="text-sm text-primary font-medium">
+                <p className="text-sm text-indigo-400 font-medium">
                   Klabat University
                 </p>
-                <p className="text-xs text-text-muted mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   2015 – 2018 &bull; North Sulawesi, Indonesia
                 </p>
               </div>
