@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -12,48 +12,160 @@ function GithubIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-interface ProjectCard {
+interface Card {
   id: number;
-  title: string;
-  summary: string;
-  tags: string[];
-  sourceUrl: string;
+  contentType: number;
 }
 
-const projects: ProjectCard[] = [
-  {
-    id: 1,
+const projectData: Record<
+  number,
+  { title: string; summary: string; tags: string[]; sourceUrl: string }
+> = {
+  1: {
     title: "Automation Script Generator",
     summary:
       "An autonomous E2E testing framework that bridges manual test case management and automated execution. Leverages Generative AI to automatically generate robust Playwright test scripts directly from Notion test tickets.",
     tags: ["Playwright", "Generative AI", "Notion API", "TypeScript", "Node.js"],
     sourceUrl: "https://github.com/raymondsambur/automation-script-generator",
   },
-  {
-    id: 2,
+  2: {
     title: "UI & API Automation — Playwright",
     summary:
       "A comprehensive test automation framework covering both UI and API layers using Playwright. Implements best practices for scalable test architecture including page object models, API request builders, and parallel execution.",
     tags: ["Playwright", "TypeScript", "API Testing", "Page Object Model", "CI/CD"],
     sourceUrl: "https://github.com/raymondsambur/ui-api-automation-playwright",
   },
+};
+
+const initialCards: Card[] = [
+  { id: 1, contentType: 1 },
+  { id: 2, contentType: 2 },
+  { id: 3, contentType: 1 },
 ];
 
+// Same position styles as style3
+const positionStyles = [
+  { scale: 1, y: 12 },
+  { scale: 0.95, y: -16 },
+  { scale: 0.9, y: -44 },
+];
+
+// Same exit/enter animations as style3
+const exitAnimation = {
+  y: 340,
+  scale: 1,
+  zIndex: 10,
+};
+
+const enterAnimation = {
+  y: -16,
+  scale: 0.9,
+};
+
+function CardContent({ contentType }: { contentType: number }) {
+  const data = projectData[contentType] ?? projectData[1];
+
+  return (
+    <div className="flex h-full w-full flex-col gap-4 p-6 sm:p-8">
+      {/* Title + GitHub link */}
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="text-lg sm:text-xl font-bold text-slate-100">
+          {data.title}
+        </h3>
+        <a
+          href={data.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200 shrink-0"
+          aria-label="Source code"
+        >
+          <GithubIcon size={16} />
+        </a>
+      </div>
+
+      {/* Description */}
+      <p className="text-sm text-slate-400 leading-relaxed flex-grow">
+        {data.summary}
+      </p>
+
+      {/* Tags + CTA */}
+      <div className="flex w-full items-end justify-between gap-4">
+        <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">
+          {data.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-2.5 py-1 text-[11px] font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-md"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <a
+          href={data.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-9 shrink-0 cursor-pointer select-none items-center gap-0.5 rounded-full bg-indigo-600 hover:bg-indigo-500 pl-4 pr-3 text-sm font-medium text-white transition-colors"
+        >
+          View
+          <ArrowUpRight size={14} />
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function AnimatedCard({
+  card,
+  index,
+  isAnimating,
+}: {
+  card: Card;
+  index: number;
+  isAnimating: boolean;
+}) {
+  const { scale, y } = positionStyles[index] ?? positionStyles[2];
+  const zIndex = index === 0 && isAnimating ? 10 : 3 - index;
+
+  const exitAnim = index === 0 ? exitAnimation : undefined;
+  const initialAnim = index === 2 ? enterAnimation : undefined;
+
+  return (
+    <motion.div
+      key={card.id}
+      initial={initialAnim}
+      animate={{ y, scale }}
+      exit={exitAnim}
+      transition={{
+        type: "spring",
+        duration: 1,
+        bounce: 0,
+      }}
+      style={{
+        zIndex,
+        left: "50%",
+        x: "-50%",
+        bottom: 0,
+      }}
+      className="absolute flex h-[280px] w-[324px] items-center justify-center overflow-hidden rounded-t-2xl border-x border-t border-slate-800 bg-slate-900 shadow-lg shadow-black/20 will-change-transform sm:w-[560px]"
+    >
+      <CardContent contentType={card.contentType} />
+    </motion.div>
+  );
+}
+
 export default function Projects() {
-  const [cards, setCards] = useState(projects);
+  const [cards, setCards] = useState(initialCards);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [nextId, setNextId] = useState(4);
 
-  const cycleCards = useCallback(() => {
-    if (isAnimating) return;
+  const handleAnimate = () => {
     setIsAnimating(true);
-    setCards((prev) => [...prev.slice(1), prev[0]]);
-    setTimeout(() => setIsAnimating(false), 600);
-  }, [isAnimating]);
 
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (Math.abs(info.offset.y) > 50 || Math.abs(info.offset.x) > 50) {
-      cycleCards();
-    }
+    const nextContentType = (cards[2].contentType % 2) + 1;
+
+    setCards([...cards.slice(1), { id: nextId, contentType: nextContentType }]);
+    setNextId((prev) => prev + 1);
+    setIsAnimating(false);
   };
 
   return (
@@ -65,7 +177,7 @@ export default function Projects() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
             Featured Projects
@@ -77,131 +189,40 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        {/* Card Stack */}
-        <div className="relative flex justify-center items-center">
-          <div className="relative h-[400px] sm:h-[360px] w-full max-w-2xl">
-            <AnimatePresence>
-              {cards.map((project, index) => {
-                const isTop = index === 0;
-                const stackOffset = index * -12;
-                const stackScale = 1 - index * 0.04;
-                const stackOpacity = 1 - index * 0.3;
-
-                return (
-                  <motion.div
-                    key={project.id}
-                    className="absolute inset-0 w-full cursor-grab active:cursor-grabbing"
-                    style={{ zIndex: cards.length - index }}
-                    initial={false}
-                    animate={{
-                      y: stackOffset,
-                      scale: stackScale,
-                      opacity: stackOpacity,
-                    }}
-                    exit={{
-                      y: 320,
-                      opacity: 0,
-                      scale: 0.9,
-                      rotate: -5,
-                      transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] },
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 30,
-                      mass: 0.8,
-                    }}
-                    drag={isTop ? true : false}
-                    dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
-                    dragElastic={0.15}
-                    onDragEnd={isTop ? handleDragEnd : undefined}
-                    whileDrag={{ scale: 1.02, rotate: 2 }}
-                  >
-                    <div className="h-full bg-slate-900 rounded-2xl border border-slate-800 shadow-xl shadow-black/20 overflow-hidden">
-                      {/* Gradient top bar */}
-                      <div className="h-1 bg-gradient-to-r from-indigo-500 to-cyan-500" />
-
-                      <div className="p-8 md:p-10 flex flex-col h-full">
-                        {/* Header */}
-                        <div className="flex items-start justify-between mb-4">
-                          <h3 className="text-xl md:text-2xl font-bold text-slate-100">
-                            {project.title}
-                          </h3>
-                          <a
-                            href={project.sourceUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200 shrink-0 ml-4"
-                            aria-label="Source code"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <GithubIcon size={18} />
-                          </a>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-slate-400 leading-relaxed mb-6 flex-grow">
-                          {project.summary}
-                        </p>
-
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-2 mb-5">
-                          {project.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-lg"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* View link */}
-                        <a
-                          href={project.sourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors group/link"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          View on GitHub
-                          <ArrowUpRight
-                            size={14}
-                            className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"
-                          />
-                        </a>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+        {/* Card Stack — same structure as style3 */}
+        <div className="flex w-full flex-col items-center justify-center pt-2">
+          <div className="relative h-[380px] w-full overflow-hidden sm:w-[644px]">
+            <AnimatePresence initial={false}>
+              {cards.slice(0, 3).map((card, index) => (
+                <AnimatedCard
+                  key={card.id}
+                  card={card}
+                  index={index}
+                  isAnimating={isAnimating}
+                />
+              ))}
             </AnimatePresence>
           </div>
-        </div>
 
-        {/* Controls */}
-        <div className="flex flex-col items-center gap-3 mt-8">
-          <button
-            onClick={cycleCards}
-            disabled={isAnimating}
-            className="flex h-10 cursor-pointer select-none items-center justify-center gap-2 overflow-hidden rounded-xl border border-slate-800 bg-slate-900 px-6 text-sm font-medium text-slate-300 transition-all hover:bg-slate-800 hover:text-indigo-300 hover:border-indigo-500/30 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next Project
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
+          <div className="relative z-10 -mt-px flex w-full items-center justify-center border-t border-slate-800 py-4">
+            <button
+              onClick={handleAnimate}
+              className="flex h-9 cursor-pointer select-none items-center justify-center gap-1 overflow-hidden rounded-lg border border-slate-800 bg-slate-900 px-4 font-medium text-slate-300 transition-all hover:bg-slate-800 hover:text-indigo-300 hover:border-indigo-500/30 active:scale-[0.98]"
             >
-              <path d="M9.5 18L15.5 12L9.5 6" />
-            </svg>
-          </button>
-          <p className="text-xs text-slate-600">
-            or drag the card to swap
-          </p>
+              Next Project
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="square"
+              >
+                <path d="M9.5 18L15.5 12L9.5 6" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
