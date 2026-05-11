@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, PanInfo } from "framer-motion";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -39,103 +39,21 @@ const projects: ProjectCard[] = [
   },
 ];
 
-const positionStyles = [
-  { scale: 1, y: 0 },
-  { scale: 0.95, y: -28 },
-];
-
-function ProjectCardContent({ project }: { project: ProjectCard }) {
-  return (
-    <div className="flex h-full w-full flex-col p-8 md:p-10">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <h3 className="text-xl md:text-2xl font-bold text-slate-100">
-          {project.title}
-        </h3>
-        <a
-          href={project.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200 shrink-0 ml-4"
-          aria-label="Source code"
-        >
-          <GithubIcon size={18} />
-        </a>
-      </div>
-
-      {/* Description */}
-      <p className="text-slate-400 leading-relaxed mb-6">
-        {project.summary}
-      </p>
-
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {project.tags.map((tag) => (
-          <span
-            key={tag}
-            className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-lg"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      {/* View link */}
-      <a
-        href={project.sourceUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors group/link mt-auto"
-      >
-        View on GitHub
-        <ArrowUpRight
-          size={14}
-          className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"
-        />
-      </a>
-    </div>
-  );
-}
-
-function AnimatedCard({
-  project,
-  index,
-}: {
-  project: ProjectCard;
-  index: number;
-}) {
-  const { scale, y } = positionStyles[index] ?? positionStyles[1];
-  const zIndex = 3 - index;
-
-  return (
-    <motion.div
-      key={project.id}
-      layout
-      animate={{ y, scale }}
-      exit={{ y: 300, scale: 1, zIndex: 10 }}
-      transition={{
-        type: "spring",
-        duration: 0.8,
-        bounce: 0,
-      }}
-      style={{
-        zIndex,
-        left: "50%",
-        x: "-50%",
-        bottom: 0,
-      }}
-      className="absolute w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-lg will-change-transform"
-    >
-      <ProjectCardContent project={project} />
-    </motion.div>
-  );
-}
-
 export default function Projects() {
   const [cards, setCards] = useState(projects);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  const handleSwap = () => {
+  const cycleCards = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
     setCards((prev) => [...prev.slice(1), prev[0]]);
+    setTimeout(() => setIsAnimating(false), 600);
+  }, [isAnimating]);
+
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    if (Math.abs(info.offset.y) > 50 || Math.abs(info.offset.x) > 50) {
+      cycleCards();
+    }
   };
 
   return (
@@ -159,24 +77,114 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        {/* Animated Card Stack */}
-        <div className="relative h-[420px] sm:h-[380px] w-full max-w-2xl mx-auto overflow-hidden">
-          <AnimatePresence initial={false}>
-            {cards.slice(0, 2).map((project, index) => (
-              <AnimatedCard
-                key={project.id}
-                project={project}
-                index={index}
-              />
-            ))}
-          </AnimatePresence>
+        {/* Card Stack */}
+        <div className="relative flex justify-center items-center">
+          <div className="relative h-[400px] sm:h-[360px] w-full max-w-2xl">
+            <AnimatePresence>
+              {cards.map((project, index) => {
+                const isTop = index === 0;
+                const stackOffset = index * -12;
+                const stackScale = 1 - index * 0.04;
+                const stackOpacity = 1 - index * 0.3;
+
+                return (
+                  <motion.div
+                    key={project.id}
+                    className="absolute inset-0 w-full cursor-grab active:cursor-grabbing"
+                    style={{ zIndex: cards.length - index }}
+                    initial={false}
+                    animate={{
+                      y: stackOffset,
+                      scale: stackScale,
+                      opacity: stackOpacity,
+                    }}
+                    exit={{
+                      y: 320,
+                      opacity: 0,
+                      scale: 0.9,
+                      rotate: -5,
+                      transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] },
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30,
+                      mass: 0.8,
+                    }}
+                    drag={isTop ? true : false}
+                    dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
+                    dragElastic={0.15}
+                    onDragEnd={isTop ? handleDragEnd : undefined}
+                    whileDrag={{ scale: 1.02, rotate: 2 }}
+                  >
+                    <div className="h-full bg-slate-900 rounded-2xl border border-slate-800 shadow-xl shadow-black/20 overflow-hidden">
+                      {/* Gradient top bar */}
+                      <div className="h-1 bg-gradient-to-r from-indigo-500 to-cyan-500" />
+
+                      <div className="p-8 md:p-10 flex flex-col h-full">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <h3 className="text-xl md:text-2xl font-bold text-slate-100">
+                            {project.title}
+                          </h3>
+                          <a
+                            href={project.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200 shrink-0 ml-4"
+                            aria-label="Source code"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <GithubIcon size={18} />
+                          </a>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-slate-400 leading-relaxed mb-6 flex-grow">
+                          {project.summary}
+                        </p>
+
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-2 mb-5">
+                          {project.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-lg"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* View link */}
+                        <a
+                          href={project.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors group/link"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          View on GitHub
+                          <ArrowUpRight
+                            size={14}
+                            className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"
+                          />
+                        </a>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
         </div>
 
-        {/* Swap button */}
-        <div className="relative z-10 flex w-full items-center justify-center border-t border-slate-800 pt-6 mt-2">
+        {/* Controls */}
+        <div className="flex flex-col items-center gap-3 mt-8">
           <button
-            onClick={handleSwap}
-            className="flex h-10 cursor-pointer select-none items-center justify-center gap-1.5 overflow-hidden rounded-lg border border-slate-800 bg-slate-900 px-5 text-sm font-medium text-slate-300 transition-all hover:bg-slate-800 hover:text-indigo-300 hover:border-indigo-500/30 active:scale-[0.98]"
+            onClick={cycleCards}
+            disabled={isAnimating}
+            className="flex h-10 cursor-pointer select-none items-center justify-center gap-2 overflow-hidden rounded-xl border border-slate-800 bg-slate-900 px-6 text-sm font-medium text-slate-300 transition-all hover:bg-slate-800 hover:text-indigo-300 hover:border-indigo-500/30 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next Project
             <svg
@@ -186,11 +194,14 @@ export default function Projects() {
               fill="none"
               stroke="currentColor"
               strokeWidth="2.5"
-              strokeLinecap="square"
+              strokeLinecap="round"
             >
               <path d="M9.5 18L15.5 12L9.5 6" />
             </svg>
           </button>
+          <p className="text-xs text-slate-600">
+            or drag the card to swap
+          </p>
         </div>
       </div>
     </section>
