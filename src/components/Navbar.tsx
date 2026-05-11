@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const basePath =
+  process.env.NODE_ENV === "production" ? "/raymond-sambur-profile" : "";
+
 const navLinks = [
   { href: "#about", label: "About" },
   { href: "#projects", label: "Projects" },
@@ -30,14 +33,17 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a
-          href="#"
-          className="text-xl font-bold text-slate-100 hover:text-indigo-400 transition-colors"
-        >
-          RS<span className="text-indigo-400">.</span>
+      <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+        {/* Profile pic as logo */}
+        <a href="#" className="shrink-0">
+          <img
+            src={`${basePath}/profile.png`}
+            alt="Raymond Sambur"
+            className="w-9 h-9 rounded-full object-cover border border-indigo-400/30 hover:border-indigo-400/60 transition-colors"
+          />
         </a>
 
+        {/* Desktop Navigation */}
         <ul className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <li key={link.href}>
@@ -51,6 +57,7 @@ export default function Navbar() {
           ))}
         </ul>
 
+        {/* Mobile Menu Toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden text-slate-100 p-2"
@@ -60,6 +67,7 @@ export default function Navbar() {
         </button>
       </div>
 
+      {/* Mobile Navigation */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

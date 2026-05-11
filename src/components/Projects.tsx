@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
@@ -12,33 +12,131 @@ function GithubIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-const projects = [
+interface ProjectCard {
+  id: number;
+  title: string;
+  summary: string;
+  tags: string[];
+  sourceUrl: string;
+}
+
+const projects: ProjectCard[] = [
   {
+    id: 1,
     title: "Automation Script Generator",
     summary:
-      "An autonomous E2E testing framework that bridges manual test case management and automated execution. Leverages Generative AI to automatically generate robust Playwright test scripts directly from Notion test tickets — eliminating the manual-to-automation gap.",
+      "An autonomous E2E testing framework that bridges manual test case management and automated execution. Leverages Generative AI to automatically generate robust Playwright test scripts directly from Notion test tickets.",
     tags: ["Playwright", "Generative AI", "Notion API", "TypeScript", "Node.js"],
     sourceUrl: "https://github.com/raymondsambur/automation-script-generator",
-    liveUrl: null,
-    accent: "from-indigo-500 to-cyan-500",
   },
   {
+    id: 2,
     title: "UI & API Automation — Playwright",
     summary:
-      "A comprehensive test automation framework covering both UI and API layers using Playwright. Implements best practices for scalable test architecture including page object models, API request builders, and parallel execution support.",
+      "A comprehensive test automation framework covering both UI and API layers using Playwright. Implements best practices for scalable test architecture including page object models, API request builders, and parallel execution.",
     tags: ["Playwright", "TypeScript", "API Testing", "Page Object Model", "CI/CD"],
     sourceUrl: "https://github.com/raymondsambur/ui-api-automation-playwright",
-    liveUrl: null,
-    accent: "from-cyan-500 to-indigo-500",
   },
 ];
 
-export default function Projects() {
-  const [activeIndex, setActiveIndex] = useState(0);
+const positionStyles = [
+  { scale: 1, y: 0 },
+  { scale: 0.95, y: -28 },
+];
 
-  const next = () => setActiveIndex((i) => (i + 1) % projects.length);
-  const prev = () =>
-    setActiveIndex((i) => (i - 1 + projects.length) % projects.length);
+function ProjectCardContent({ project }: { project: ProjectCard }) {
+  return (
+    <div className="flex h-full w-full flex-col p-8 md:p-10">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-4">
+        <h3 className="text-xl md:text-2xl font-bold text-slate-100">
+          {project.title}
+        </h3>
+        <a
+          href={project.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200 shrink-0 ml-4"
+          aria-label="Source code"
+        >
+          <GithubIcon size={18} />
+        </a>
+      </div>
+
+      {/* Description */}
+      <p className="text-slate-400 leading-relaxed mb-6">
+        {project.summary}
+      </p>
+
+      {/* Tags */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {project.tags.map((tag) => (
+          <span
+            key={tag}
+            className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-lg"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      {/* View link */}
+      <a
+        href={project.sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors group/link mt-auto"
+      >
+        View on GitHub
+        <ArrowUpRight
+          size={14}
+          className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"
+        />
+      </a>
+    </div>
+  );
+}
+
+function AnimatedCard({
+  project,
+  index,
+}: {
+  project: ProjectCard;
+  index: number;
+}) {
+  const { scale, y } = positionStyles[index] ?? positionStyles[1];
+  const zIndex = 3 - index;
+
+  return (
+    <motion.div
+      key={project.id}
+      layout
+      animate={{ y, scale }}
+      exit={{ y: 300, scale: 1, zIndex: 10 }}
+      transition={{
+        type: "spring",
+        duration: 0.8,
+        bounce: 0,
+      }}
+      style={{
+        zIndex,
+        left: "50%",
+        x: "-50%",
+        bottom: 0,
+      }}
+      className="absolute w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-lg will-change-transform"
+    >
+      <ProjectCardContent project={project} />
+    </motion.div>
+  );
+}
+
+export default function Projects() {
+  const [cards, setCards] = useState(projects);
+
+  const handleSwap = () => {
+    setCards((prev) => [...prev.slice(1), prev[0]]);
+  };
 
   return (
     <section id="projects" className="py-24 bg-slate-950">
@@ -62,133 +160,37 @@ export default function Projects() {
         </motion.div>
 
         {/* Animated Card Stack */}
-        <div className="relative">
-          {/* Stacked cards preview (background cards) */}
-          <div className="relative flex justify-center">
-            <div className="relative w-full max-w-2xl">
-              {/* Background card indicators */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-[90%] h-full rounded-2xl border border-slate-800 bg-slate-900/50 -z-10" />
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[80%] h-full rounded-2xl border border-slate-800/50 bg-slate-900/30 -z-20" />
+        <div className="relative h-[420px] sm:h-[380px] w-full max-w-2xl mx-auto overflow-hidden">
+          <AnimatePresence initial={false}>
+            {cards.slice(0, 2).map((project, index) => (
+              <AnimatedCard
+                key={project.id}
+                project={project}
+                index={index}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
 
-              {/* Active card */}
-              <AnimatePresence mode="wait">
-                <motion.article
-                  key={activeIndex}
-                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                  transition={{
-                    type: "spring",
-                    duration: 0.6,
-                    bounce: 0,
-                  }}
-                  className="relative bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden"
-                >
-                  {/* Top gradient accent */}
-                  <div
-                    className={`h-1 bg-gradient-to-r ${projects[activeIndex].accent}`}
-                  />
-
-                  <div className="p-8 md:p-10">
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-5">
-                      <h3 className="text-xl md:text-2xl font-bold text-slate-100">
-                        {projects[activeIndex].title}
-                      </h3>
-                      <div className="flex items-center gap-3 shrink-0 ml-4">
-                        {projects[activeIndex].liveUrl && (
-                          <a
-                            href={projects[activeIndex].liveUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200"
-                            aria-label="Live demo"
-                          >
-                            <ExternalLink size={18} />
-                          </a>
-                        )}
-                        <a
-                          href={projects[activeIndex].sourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 text-slate-400 transition-all duration-200"
-                          aria-label="Source code"
-                        >
-                          <GithubIcon size={18} />
-                        </a>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-slate-400 leading-relaxed mb-6 max-w-3xl">
-                      {projects[activeIndex].summary}
-                    </p>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {projects[activeIndex].tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-3 py-1.5 text-xs font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-lg"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* View link */}
-                    <a
-                      href={projects[activeIndex].sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-indigo-400 transition-colors group/link"
-                    >
-                      View on GitHub
-                      <ArrowUpRight
-                        size={14}
-                        className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform"
-                      />
-                    </a>
-                  </div>
-                </motion.article>
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Navigation controls */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <button
-              onClick={prev}
-              className="p-2.5 rounded-lg border border-slate-800 bg-slate-900 hover:border-indigo-500/50 hover:text-indigo-400 text-slate-400 transition-all"
-              aria-label="Previous project"
+        {/* Swap button */}
+        <div className="relative z-10 flex w-full items-center justify-center border-t border-slate-800 pt-6 mt-2">
+          <button
+            onClick={handleSwap}
+            className="flex h-10 cursor-pointer select-none items-center justify-center gap-1.5 overflow-hidden rounded-lg border border-slate-800 bg-slate-900 px-5 text-sm font-medium text-slate-300 transition-all hover:bg-slate-800 hover:text-indigo-300 hover:border-indigo-500/30 active:scale-[0.98]"
+          >
+            Next Project
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="square"
             >
-              <ChevronLeft size={18} />
-            </button>
-
-            {/* Dots */}
-            <div className="flex items-center gap-2">
-              {projects.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveIndex(i)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    i === activeIndex
-                      ? "bg-indigo-500 w-6"
-                      : "bg-slate-700 hover:bg-slate-600"
-                  }`}
-                  aria-label={`Go to project ${i + 1}`}
-                />
-              ))}
-            </div>
-
-            <button
-              onClick={next}
-              className="p-2.5 rounded-lg border border-slate-800 bg-slate-900 hover:border-indigo-500/50 hover:text-indigo-400 text-slate-400 transition-all"
-              aria-label="Next project"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
+              <path d="M9.5 18L15.5 12L9.5 6" />
+            </svg>
+          </button>
         </div>
       </div>
     </section>

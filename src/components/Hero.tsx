@@ -12,7 +12,7 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-slate-950"
     >
-      {/* === LAMP EFFECT — positioned above the content === */}
+      {/* === LAMP EFFECT — top of section === */}
       <div className="absolute top-0 left-0 right-0 h-[50vh] flex items-center justify-center">
         <div className="relative flex w-full scale-y-125 items-center justify-center isolate z-0">
           <motion.div
@@ -69,6 +69,7 @@ export default function Hero() {
         >
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500/20 to-cyan-500/10 blur-2xl scale-150" />
           <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden border-2 border-indigo-400/30 shadow-2xl shadow-indigo-500/20">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`${basePath}/profile.png`}
               alt="Raymond Jhonathan Sambur"
